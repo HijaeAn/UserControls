@@ -1,0 +1,74 @@
+<Window x:Class="UserControls.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:UserControls.ViewModels"
+        xmlns:conv="clr-namespace:UserControls.Converters"
+        Title="Toggle Control Sample" Height="300" Width="400">
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+
+        <Style TargetType="ToggleButton" x:Key="OnOffToggleStyle">
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Content" Value="OFF" />
+            <Setter Property="Background" Value="Gray" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="8,4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="#2196F3" />
+                    <Setter Property="Content" Value="ON" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <StackPanel Margin="20" VerticalAlignment="Top">
+
+        <!-- 토글 버튼: IsOn과 양방향 바인딩 -->
+        <ToggleButton Style="{StaticResource OnOffToggleStyle}"
+                      IsChecked="{Binding IsOn, Mode=TwoWay}"
+                      HorizontalAlignment="Left" />
+
+        <!-- 그룹 A: IsOn = true 일 때 표시 -->
+        <Grid Margin="0,16,0,0"
+              Visibility="{Binding IsOn, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="a" VerticalAlignment="Center" />
+            <TextBox   Grid.Column="1" />
+        </Grid>
+
+        <!-- 그룹 B: IsOn = false 일 때 표시 -->
+        <Grid Margin="0,16,0,0"
+              Visibility="{Binding IsOn, Converter={StaticResource InverseBoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="b" VerticalAlignment="Center" />
+            <TextBox   Grid.Column="1" />
+        </Grid>
+
+    </StackPanel>
+</Window>
