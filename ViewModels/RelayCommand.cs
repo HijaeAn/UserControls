@@ -2,15 +2,34 @@ using System.Windows.Input;
 
 namespace UserControls.ViewModels;
 
-public class RelayCommand(Action execute, Func<bool>? canExecute = null) : ICommand
+public class RelayCommand : ICommand
 {
-    public event EventHandler? CanExecuteChanged
+    private readonly Action _execute;
+    private readonly Func<bool>? _canExecute;
+
+    public RelayCommand(Action execute, Func<bool>? canExecute = null)
     {
-        add => CommandManager.RequerySuggested += value;
-        remove => CommandManager.RequerySuggested -= value;
+        _execute = execute;
+        _canExecute = canExecute;
     }
 
-    public bool CanExecute(object? parameter) => canExecute?.Invoke() ?? true;
+    public event EventHandler? CanExecuteChanged
+    {
+        add { CommandManager.RequerySuggested += value; }
+        remove { CommandManager.RequerySuggested -= value; }
+    }
 
-    public void Execute(object? parameter) => execute();
+    public bool CanExecute(object? parameter)
+    {
+        if (_canExecute != null)
+        {
+            return _canExecute.Invoke();
+        }
+        return true;
+    }
+
+    public void Execute(object? parameter)
+    {
+        _execute();
+    }
 }

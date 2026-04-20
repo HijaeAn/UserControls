@@ -8,10 +8,22 @@ namespace UserControls.Converters;
 public class BoolToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is true ? Visibility.Visible : Visibility.Collapsed;
+    {
+        if (value is true)
+        {
+            return Visibility.Visible;
+        }
+        return Visibility.Collapsed;
+    }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is Visibility.Visible;
+    {
+        if (value is Visibility.Visible)
+        {
+            return true;
+        }
+        return false;
+    }
 }
 
 [ValueConversion(typeof(bool), typeof(Visibility))]

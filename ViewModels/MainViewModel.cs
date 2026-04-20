@@ -10,7 +10,10 @@ public class MainViewModel : INotifyPropertyChanged
 
     public bool IsOn
     {
-        get => _isOn;
+        get
+        {
+            return _isOn;
+        }
         set
         {
             if (_isOn == value) return;
@@ -23,11 +26,18 @@ public class MainViewModel : INotifyPropertyChanged
 
     public MainViewModel()
     {
-        ToggleCommand = new RelayCommand(() => IsOn = !IsOn);
+        ToggleCommand = new RelayCommand(ToggleIsOn);
+    }
+
+    private void ToggleIsOn()
+    {
+        IsOn = !IsOn;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
 }
