@@ -39,14 +39,82 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <Style TargetType="ToggleButton" x:Key="SlidingToggleStyle">
+            <Setter Property="Width" Value="52" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid>
+                            <!-- 트랙 -->
+                            <Border x:Name="Track" CornerRadius="14">
+                                <Border.Background>
+                                    <SolidColorBrush x:Name="TrackColor" Color="Gray" />
+                                </Border.Background>
+                            </Border>
+                            <!-- 썸(원형 핸들) -->
+                            <Ellipse x:Name="Thumb"
+                                     Width="22" Height="22"
+                                     Fill="White"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Center"
+                                     Margin="3,0,0,0">
+                                <Ellipse.RenderTransform>
+                                    <TranslateTransform x:Name="ThumbSlide" X="0" />
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="TrackColor"
+                                                            Storyboard.TargetProperty="Color"
+                                                            To="#2196F3"
+                                                            Duration="0:0:0.15" />
+                                            <DoubleAnimation Storyboard.TargetName="ThumbSlide"
+                                                             Storyboard.TargetProperty="X"
+                                                             To="24"
+                                                             Duration="0:0:0.15" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="TrackColor"
+                                                            Storyboard.TargetProperty="Color"
+                                                            To="Gray"
+                                                            Duration="0:0:0.15" />
+                                            <DoubleAnimation Storyboard.TargetName="ThumbSlide"
+                                                             Storyboard.TargetProperty="X"
+                                                             To="0"
+                                                             Duration="0:0:0.15" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <StackPanel Margin="20" VerticalAlignment="Top">
 
-        <!-- 토글 버튼: IsOn과 양방향 바인딩 -->
-        <ToggleButton Style="{StaticResource OnOffToggleStyle}"
-                      IsChecked="{Binding IsOn, Mode=TwoWay}"
-                      HorizontalAlignment="Left" />
+        <!-- 두 토글 버튼: 같은 IsOn에 바인딩 -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <ToggleButton Style="{StaticResource OnOffToggleStyle}"
+                          IsChecked="{Binding IsOn, Mode=TwoWay}" />
+            <ToggleButton Style="{StaticResource SlidingToggleStyle}"
+                          IsChecked="{Binding IsOn, Mode=TwoWay}"
+                          Margin="12,0,0,0"
+                          VerticalAlignment="Center" />
+        </StackPanel>
 
         <!-- 그룹 A: IsOn = true 일 때 표시 -->
         <Grid Margin="0,16,0,0"
